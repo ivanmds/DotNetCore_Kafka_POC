@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Confluent.Kafka;
+using Feed.Api.Workers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +28,12 @@ namespace Feed.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            //services.AddHostedService<ReadTopicConsumer>();
+            //var consumerConfig = new ConsumerConfig { GroupId = "test-consumer-group", BootstrapServers = "broker:29092" };
+            //Configuration.Bind("topicfeed2", consumerConfig);
+
+            //services.AddSingleton(consumerConfig);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
