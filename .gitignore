@@ -1,5 +1,5 @@
-KafkaPOC/obj/*
-KafkaPOC/bin/*
-KafkaPOC/FeedService/obj/*
-KafkaPOC/FeedService/bin/*
-KafkaPOC/.vs/*
+Feed.Api/obj/*
+Feed.Api/bin/*
+.vs/*
+obj/*
+bin/*
