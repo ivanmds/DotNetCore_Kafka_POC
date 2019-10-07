@@ -17,16 +17,28 @@ namespace Feed.Api.Workers
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-
-            Console.WriteLine("OrderProcessing Service Started");
-
-            while (!stoppingToken.IsCancellationRequested)
+            var conf = new ConsumerConfig
             {
-                var consumerHelper = new ConsumerWrapper(_consumerConfig, "topicfeed2");
-                string orderRequest = consumerHelper.ReadMessage();
+                GroupId = "test-consumer-group",
+                BootstrapServers = "broker:29092",
+                AutoOffsetReset = AutoOffsetReset.Earliest
+            };
 
-                //TODO:: Process Order
-                Console.WriteLine($"Info: OrderHandler => Processing the order for {orderRequest}");
+            using var c = new ConsumerBuilder<Ignore, string>(conf).Build();
+
+            c.Subscribe("topicfeed2");
+
+            try
+            {
+                var cr = c.Consume(TimeSpan.FromSeconds(1));
+
+                if(cr != null)
+                    Console.WriteLine($"Consumed message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
+            }
+            catch (OperationCanceledException)
+            {
+                // Ensure the consumer leaves the group cleanly and final offsets are committed.
+                c.Close();
             }
         }
     }
