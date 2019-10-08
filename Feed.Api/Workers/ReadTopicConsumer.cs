@@ -8,41 +8,45 @@ namespace Feed.Api.Workers
 {
     public class ReadTopicConsumer : BackgroundService
     {
-        private readonly ConsumerConfig _consumerConfig;
+        private readonly IConsumer<Ignore, string> _consumer;
+        private string topicname = "topicfeed2";
 
-        public ReadTopicConsumer(ConsumerConfig consumerConfig)
+        public ReadTopicConsumer(IConsumer<Ignore, string> consumer)
         {
-            _consumerConfig = consumerConfig;
+            _consumer = consumer;
+        }
+
+        public override Task StartAsync(CancellationToken cancellationToken)
+        {
+            _consumer.Subscribe(topicname);
+            return base.StartAsync(cancellationToken);
+        }
+
+        public override Task StopAsync(CancellationToken cancellationToken)
+        {
+            _consumer?.Dispose();
+            return base.StopAsync(cancellationToken);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            //while (!stoppingToken.IsCancellationRequested)
+            //{
+
+            try
             {
-                var conf = new ConsumerConfig
-                {
-                    GroupId = "test-consumer-group",
-                    BootstrapServers = "broker:29092",
-                    AutoOffsetReset = AutoOffsetReset.Earliest
-                };
+                var cr = _consumer.Consume(TimeSpan.FromSeconds(3));
 
-                using var c = new ConsumerBuilder<Ignore, string>(conf).Build();
-
-                c.Subscribe("topicfeed2");
-
-                try
-                {
-                    var cr = c.Consume(TimeSpan.FromSeconds(1));
-
-                    if (cr != null)
-                        Console.WriteLine($"Consumed message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
-                }
-                catch (OperationCanceledException)
-                {
-                    // Ensure the consumer leaves the group cleanly and final offsets are committed.
-                    c.Close();
-                }
+                if (cr != null)
+                    Console.WriteLine($"Consumed message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
             }
+            catch (OperationCanceledException)
+            {
+                // Ensure the consumer leaves the group cleanly and final offsets are committed.
+
+                _consumer.Close();
+            }
+            //}
         }
     }
 }
