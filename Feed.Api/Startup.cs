@@ -22,15 +22,15 @@ namespace Feed.Api
         {
             services.AddControllers();
 
-            var consumerConfig = new ConsumerConfig { GroupId = "test-consumer-group", BootstrapServers = "broker:29092", AutoOffsetReset = AutoOffsetReset.Earliest };
+            //var consumerConfig = new ConsumerConfig { GroupId = "test-consumer-group", BootstrapServers = "broker:29092", AutoOffsetReset = AutoOffsetReset.Earliest };
            
-            var consumer = new ConsumerBuilder<Ignore, string>(consumerConfig).Build();
+            //var consumer = new ConsumerBuilder<Ignore, string>(consumerConfig).Build();
             
 
-            services.AddSingleton(consumer);
+            //services.AddSingleton(consumer);
 
 
-            services.AddHostedService<ReadTopicConsumer>();
+            //services.AddHostedService<ReadTopicConsumer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

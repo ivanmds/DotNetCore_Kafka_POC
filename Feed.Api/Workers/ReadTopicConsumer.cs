@@ -35,7 +35,7 @@ namespace Feed.Api.Workers
 
             try
             {
-                var cr = _consumer.Consume(TimeSpan.FromSeconds(3));
+                var cr = _consumer.Consume(stoppingToken);
 
                 if (cr != null)
                     Console.WriteLine($"Consumed message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
