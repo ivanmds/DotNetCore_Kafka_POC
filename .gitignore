@@ -1,5 +1,6 @@
-Feed.Api/obj/*
-Feed.Api/bin/*
 .vs/*
 obj/*
 bin/*
+
+*/obj/*
+*/bin/*
