@@ -8,15 +8,15 @@ namespace Feed.Api.Kafka.Producers
 {
     public class CustomerProducer : IDisposable
     {
-        private readonly ProducerBuilder<string, string> _producerBuilder;
-        private readonly IProducer<string, string> _producer;
+        private readonly ProducerBuilder<Null, string> _producerBuilder;
+        private readonly IProducer<Null, string> _producer;
         protected readonly ProducerConfig _producerConfig;
-        private static string TOPIC_NAME = "customer_topic";
+        public static string TOPIC_NAME = "customer-topic";
 
         public CustomerProducer()
         {
-            _producerConfig = new ProducerConfig {  BootstrapServers = "broker:29092", Acks = Acks.All };
-            _producerBuilder = new ProducerBuilder<string, string>(_producerConfig);
+            _producerConfig = new ProducerConfig {  BootstrapServers = "broker:29092" };
+            _producerBuilder = new ProducerBuilder<Null, string>(_producerConfig);
             _producer = _producerBuilder.Build();
         }
 
@@ -25,7 +25,7 @@ namespace Feed.Api.Kafka.Producers
             if (customer == null) return;
 
             var value = JsonConvert.SerializeObject(customer);
-            await _producer.ProduceAsync(TOPIC_NAME, new Message<string, string> { Key = customer.Document, Value = value });
+            await _producer.ProduceAsync(TOPIC_NAME, new Message<Null, string> { Value = value });
         }
 
         public void Dispose()

@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using Feed.Api.Kafka.Producers;
 using System;
 using System.Threading;
 
@@ -8,23 +9,22 @@ namespace Feed.Api.Consumer
     {
         static void Main(string[] args)
         {
-            string kafkaEndpoint = "localhost:9092";
-
             var conf = new ConsumerConfig
             {
-                GroupId = "test-consumer-group",
-                BootstrapServers = kafkaEndpoint,
-                AutoOffsetReset = AutoOffsetReset.Latest
+                GroupId = "customer-group-test",
+                BootstrapServers = "localhost:9092",
+                AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
-            using (var c = new ConsumerBuilder<Ignore, string>(conf).Build())
+            using (var customer = new ConsumerBuilder<Ignore, string>(conf).Build())
             {
-                c.Subscribe("topicfeed2");
+                customer.Subscribe(CustomerProducer.TOPIC_NAME);
 
                 CancellationTokenSource cts = new CancellationTokenSource();
-                Console.CancelKeyPress += (_, e) => {
+                Console.CancelKeyPress += (_, e) =>
+                {
                     e.Cancel = true;
-                    cts.Cancel(); 
+                    cts.Cancel();
                 };
 
                 try
@@ -33,7 +33,7 @@ namespace Feed.Api.Consumer
                     {
                         try
                         {
-                            var cr = c.Consume(cts.Token);
+                            var cr = customer.Consume(cts.Token);
                             Console.WriteLine($"Consumed message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
                         }
                         catch (ConsumeException e)
@@ -45,7 +45,7 @@ namespace Feed.Api.Consumer
                 catch (OperationCanceledException)
                 {
                     // Ensure the consumer leaves the group cleanly and final offsets are committed.
-                    c.Close();
+                    customer.Close();
                 }
             }
         }
