@@ -14,7 +14,7 @@ namespace Feed.Api.Consumer
             {
                 GroupId = "test-consumer-group",
                 BootstrapServers = kafkaEndpoint,
-                AutoOffsetReset = AutoOffsetReset.Earliest
+                AutoOffsetReset = AutoOffsetReset.Latest
             };
 
             using (var c = new ConsumerBuilder<Ignore, string>(conf).Build())

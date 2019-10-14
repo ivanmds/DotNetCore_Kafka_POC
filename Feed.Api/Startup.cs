@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Feed.Api.Kafka.Producers;
 using Feed.Api.Workers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,20 +18,10 @@ namespace Feed.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
-            //var consumerConfig = new ConsumerConfig { GroupId = "test-consumer-group", BootstrapServers = "broker:29092", AutoOffsetReset = AutoOffsetReset.Earliest };
-           
-            //var consumer = new ConsumerBuilder<Ignore, string>(consumerConfig).Build();
-            
-
-            //services.AddSingleton(consumer);
-
-
-            //services.AddHostedService<ReadTopicConsumer>();
+            services.AddScoped<CustomerProducer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
